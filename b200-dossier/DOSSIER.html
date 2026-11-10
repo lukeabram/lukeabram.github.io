@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A guide to the sources · B200 dossier</title>
+  <meta name="description" content="Reading guide for the NVIDIA B200 dossier, by report section">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%2376b900'/%3E%3C/svg%3E">
+  <style>
+    html { scrollbar-gutter: stable; background: #fff; color: #222; }
+    * { box-sizing: border-box; }
+    body { font-family: Georgia, "Times New Roman", serif; line-height: 1.65; font-size: 17px; margin: 48px auto; padding: 0 22px; max-width: 760px; background: #fff; }
+    h1, h2, h3 { line-height: 1.25; }
+    h1 { font-size: 2rem; margin: 0 0 1.2rem; }
+    h2 { font-size: 1.35rem; margin: 2rem 0 .8rem; }
+    h3 { font-size: 1.1rem; margin: 1.5rem 0 .6rem; }
+    p { margin: 0 0 1rem; }
+    ul { padding-left: 1.3rem; }
+    li { margin: .6rem 0; }
+    a { color: #224d76; text-underline-offset: .15em; overflow-wrap: anywhere; }
+    a:hover { color: #111; }
+    a:focus-visible, button:focus-visible { outline: 2px solid #224d76; outline-offset: 4px; }
+    table { border-collapse: collapse; display: block; overflow-x: auto; margin: 0 0 1rem; font-size: 15px; }
+    th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; vertical-align: top; }
+    th { background: #f4f4f4; }
+    code { font-size: .85em; overflow-wrap: anywhere; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.5; padding: 16px; border: 1px solid #ddd; background: #f7f7f7; border-radius: 4px; }
+    pre code { font-size: inherit; }
+    .note { font-size: 15px; color: #555; }
+    .tag { font: 12px system-ui, sans-serif; border: 1px solid #bbb; border-radius: 3px; padding: 1px 5px; margin-left: 4px; color: #555; white-space: nowrap; }
+    .copy-citation { display: block; margin: 0 0 8px auto; padding: 6px 10px; font: 14px system-ui, sans-serif; color: #224d76; background: #fff; border: 1px solid #bbb; border-radius: 4px; cursor: pointer; }
+    .site-footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 15px; }
+    .site-footer nav { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+    @media (max-width: 480px) { body { margin: 28px auto; padding: 0 18px; } h1 { font-size: 1.65rem; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div id="maincontent">
+<h1>A guide to the sources</h1>
+
+<p>The report is split into four sections. Each section below names the sources to start with, where in them to look, and, for Section A, a summary of what we found. Every figure here is attributed to its source; where sources disagree, we say so.</p>
+
+<ul>
+  <li><a href="#section-a">A. Microarchitecture</a></li>
+  <li><a href="#section-b">B. ISA and memory consistency</a></li>
+  <li><a href="#section-c">C. Memory system and interconnect</a></li>
+  <li><a href="#section-d">D. Specialized units, performance, and framing</a></li>
+  <li><a href="#disagreements">Where the sources disagree</a></li>
+</ul>
+
+<h2 id="section-a">A. Microarchitecture</h2>
+
+<p class="note">Owner: Luke Abram. Covers SM organization, the register file, warp processing units, functional units, fifth-generation tensor cores and TMEM, and scheduling.</p>
+
+<p>Start with <a href="/b200-dossier/sources/nvidia-blackwell-tuning-guide.html">the Blackwell Tuning Guide</a>, §1.4.1, for the official per-SM limits. Then read §III-A and §V-A of <a href="/b200-dossier/sources/jarmusch-2026-b200.html">Jarmusch and Chandrasekaran (2026)</a> for chip organization and Tensor Memory as measured on a B200. For how the tensor cores are actually driven, the <a href="/b200-dossier/sources/cutlass-tcgen05-programming.html">CUTLASS tcgen05 guide</a> is the clearest source; read “Global Memory (GMEM) to MMA data flow overview” first, then the CtaGroup.TWO section.</p>
+
+<p>For instruction issue and the unified INT32/FP32 units, the only public measurements are in <a href="/b200-dossier/sources/jarmusch-2025-gb203.html">Jarmusch, Graddon and Chandrasekaran (2025)</a>, §IV-B and §IV-D. That paper tests the consumer GB203, so treat its results as evidence about the Blackwell SM in general, not about B200. The <a href="/b200-dossier/sources/cornell-cvw-gpu-architecture.html">Cornell Virtual Workshop</a> is a useful check on your reading of the SM diagram.</p>
+
+<h3 id="a-findings">What we found</h3>
+
+<table>
+  <thead><tr><th>Topic</th><th>Finding</th><th>Source</th></tr></thead>
+  <tbody>
+    <tr><td>Chip organization</td><td>Two dies, each with 80 SMs physically present and 74 enabled, for 148 of 160 SMs enabled. The SMs are spread across 8 GPCs. The chip has 4 L2 partitions (twice Hopper’s count) and 8 HBM3e stacks, and the two dies are joined by NV-HBI.</td><td><a href="/b200-dossier/sources/chips-and-cheese-b200.html">Chips and Cheese</a>; <a href="/b200-dossier/sources/jarmusch-2026-b200.html">Jarmusch 2026</a>, §III-A</td></tr>
+    <tr><td>SM sub-partitions</td><td>4 per SM. Each has an L0 instruction cache, a warp scheduler, a dispatch unit (32 threads/clk), a 16,384 × 32-bit register file slice, 64 KB of TMEM, CUDA cores, a tensor core, LD/ST units, and an SFU. Shared across the SM: the Tensor Memory Accelerator, 256 KB of L1/shared memory, and texture units.</td><td><a href="/b200-dossier/sources/nvidia-blackwell-technical-overview.html">Whitepaper</a>; <a href="/b200-dossier/sources/cornell-cvw-gpu-architecture.html">Cornell CVW</a></td></tr>
+    <tr><td>Register file and occupancy</td><td>64K 32-bit registers per SM, at most 255 per thread, and at most 32 blocks and 64 warps per SM. A thread that uses all 255 registers needs 8,160 registers per warp, which allows only 8 such warps per SM. Heavy register use therefore caps occupancy well below the block limit.</td><td><a href="/b200-dossier/sources/nvidia-blackwell-tuning-guide.html">Tuning Guide</a>, §1.4.1.1</td></tr>
+    <tr><td>Functional units</td><td>INT32 and FP32 appear to share unified units, based on the GB203 measurements. The SFU handles transcendental functions such as sine and exp. Tile size changed throughput but not latency, which suggests wider functional units.</td><td><a href="/b200-dossier/sources/jarmusch-2025-gb203.html">Jarmusch 2025</a>, §IV-B (GB203)</td></tr>
+    <tr><td>Tensor Memory</td><td>256 KB per SM, organized as 512 columns × 128 lanes of 32-bit cells. Each sub-partition owns 32 lanes, and a warp can access only its own 32. TMEM is allocated and freed explicitly with tcgen05.alloc and tcgen05.dealloc.</td><td><a href="/b200-dossier/sources/jarmusch-2026-b200.html">Jarmusch 2026</a>, §V-A; <a href="/b200-dossier/sources/nvidia-ptx-isa.html">PTX ISA</a>, §9.7.18.1</td></tr>
+    <tr><td>tcgen05 versus Hopper WGMMA</td><td>On Hopper, a whole warpgroup issues WGMMA in lockstep and the accumulators sit in registers. On Blackwell, a single thread issues tcgen05.mma. Operands come from shared memory or TMEM, and the accumulator always lives in TMEM, which frees the register file.</td><td><a href="/b200-dossier/sources/nvidia-ptx-isa.html">PTX ISA</a>, §9.7.18.5 and §9.7.18.10; <a href="/b200-dossier/sources/cutlass-tcgen05-programming.html">CUTLASS tcgen05</a></td></tr>
+    <tr><td>CTA pair (2-SM MMA)</td><td>Two CTAs on paired SMs work on one tile. Each holds half of the A rows and owns half of the output C in its own TMEM. Each also stores half of B and reads the other half from its peer through distributed shared memory. The usable tile size is therefore no longer limited by one SM’s shared memory.</td><td><a href="/b200-dossier/sources/cutlass-tcgen05-programming.html">CUTLASS tcgen05</a>, “CtaGroup.TWO”</td></tr>
+    <tr><td>Number formats</td><td>FP64, FP32, TF32, FP16, BF16, FP8, INT8, FP6, and FP4. Block-scaled (microscaling) formats give each small contiguous block, such as 16 or 32 elements, its own scale factor. For example, MXFP8 turns 32 FP32 values into 32 FP8 values plus one shared scale.</td><td><a href="/b200-dossier/sources/cudnn-block-scaling.html">cuDNN Block Scaling</a>; <a href="/b200-dossier/sources/cutlass-blackwell-functionality.html">CUTLASS SM100</a></td></tr>
+    <tr><td>Scheduling hierarchy</td><td>Threads are grouped into warps, warps into CTAs (thread blocks), and CTAs into clusters. A cluster lets its CTAs read, write, and perform atomics on each other’s shared memory across SMs (distributed shared memory). The warp scheduler issues one warp instruction per clock per sub-partition.</td><td><a href="/b200-dossier/sources/nvidia-cuda-programming-guide.html">CUDA Guide</a>, §1.2; <a href="/b200-dossier/sources/nvidia-blackwell-tuning-guide.html">Tuning Guide</a>, §1.4.1.2</td></tr>
+    <tr><td>Issue policy (not documented by NVIDIA)</td><td>Throughput rises smoothly as independent instructions are added, more evenly than on GH100. This points to a conservative issue strategy tuned for regular, high-ILP kernels. The result is inferred from microbenchmarks only.</td><td><a href="/b200-dossier/sources/jarmusch-2025-gb203.html">Jarmusch 2025</a>, §IV-D (GB203)</td></tr>
+    <tr><td>Where the speedup comes from</td><td>Training speedup over H200 breaks down into SM count (1.09×), CTA pairing (1.27×), and TMEM (1.26×). TMEM latency and bandwidth explain the faster attention accumulation.</td><td><a href="/b200-dossier/sources/jarmusch-2026-b200.html">Jarmusch 2026</a>, §VII-D</td></tr>
+  </tbody>
+</table>
+
+<h2 id="section-b">B. ISA and memory consistency</h2>
+
+<p class="note">Owner: Aidan. Covers the two-level ISA (PTX and SASS), Blackwell-specific instructions, and the memory consistency model.</p>
+
+<p>The <a href="/b200-dossier/sources/nvidia-ptx-isa.html">PTX ISA manual</a> is the reference throughout. For the instruction set, read §9.7.18 (the tcgen05 family), §5.5.8 (tensor maps used by TMA), and §9.7.15.16 (mbarrier). For the memory model, read chapter 8 in order: scopes (§8.5), proxies (§8.6), morally strong operations (§8.7), and release/acquire patterns (§8.8). §9.7.18.6 adds the tcgen05-specific ordering rules. These define where fences belong in a TMA → tensor core → TMEM pipeline.</p>
+
+<p>The <a href="/b200-dossier/sources/nvidia-cuda-programming-guide.html">CUDA Programming Guide</a> covers the same features from C++. Use §5.1 to explain what sm_100 and sm_100a mean, and §4.11 and §4.13 for asynchronous barriers and copies. For the theory behind scoped memory models, read <a href="/b200-dossier/sources/lustig-asplos2019.html">Lustig et al. (ASPLOS 2019)</a>.</p>
+
+<h2 id="section-c">C. Memory system and interconnect</h2>
+
+<p class="note">Owner: Pranav. Covers the chip overview, cache organization, DRAM organization, the CPU interface, and the GPU-to-GPU interconnect.</p>
+
+<p>For official capacities, start with §1.4.2 of the <a href="/b200-dossier/sources/nvidia-blackwell-tuning-guide.html">Tuning Guide</a>. It gives the 256 KB unified L1/shared memory, carve-outs up to 228 KB, and the 126 MB L2. For measured behavior, read “Cache and Memory Access” and “Bandwidth Measurements” in <a href="/b200-dossier/sources/chips-and-cheese-b200.html">Chips and Cheese</a>. That article shows the latency jump when a working set spills from the near L2 partition to the far one, and notes that most of the L2 is reachable without cross-partition penalties only when many threads are running.</p>
+
+<p>For the dual-die design and NV-HBI, use the <a href="/b200-dossier/sources/nvidia-blackwell-technical-overview.html">whitepaper</a> and the <a href="/b200-dossier/sources/hot-chips-2024-blackwell.html">Hot Chips 2024 slides</a>. For NVLink 5 and the HGX B200 board, use the <a href="/b200-dossier/sources/nvidia-nvlink-hgx.html">NVLink and HGX pages</a>. For background on how an HBM stack is organized, use <a href="/b200-dossier/sources/jedec-hbm3.html">JEDEC JESD238</a>.</p>
+
+<h2 id="section-d">D. Specialized units, performance, and framing</h2>
+
+<p class="note">Covers the specialized engines, other noteworthy features, performance characterization, the framing slide, and the discussion questions.</p>
+
+<p>The <a href="/b200-dossier/sources/nvidia-blackwell-technical-overview.html">whitepaper</a> describes the Decompression Engine, RAS Engine, Confidential Computing, and the second-generation Transformer Engine. Check its claims against §V-B of <a href="/b200-dossier/sources/jarmusch-2026-b200.html">Jarmusch and Chandrasekaran</a>, which measures decompressed output at roughly 160–220 GB/s, and against their §VII case studies. For FP4, the <a href="/b200-dossier/sources/nvidia-blog-nvfp4.html">NVFP4 blog post</a> explains NVIDIA’s format, but it is vendor-written.</p>
+
+<p>For performance, use <a href="/b200-dossier/sources/mlperf-results.html">MLPerf</a> with care: cite the round, normalize per GPU, and note whether the comparison is at the same precision. <a href="/b200-dossier/sources/chips-and-cheese-b200.html">Chips and Cheese</a> (“Compute Throughput”, “Some Light Benchmarking”) and §VII-C1 of the 2026 Jarmusch paper cover the places where B200 does not improve on Hopper, such as FP64.</p>
+
+<h2 id="disagreements">Where the sources disagree</h2>
+
+<ul>
+  <li><strong>HBM capacity.</strong> The <a href="/b200-dossier/sources/nvidia-blackwell-tuning-guide.html">Tuning Guide</a> (§1.4.2.1) gives up to 180 GB; <a href="/b200-dossier/sources/jarmusch-2026-b200.html">Jarmusch 2026</a> (§III-A) describes a unified 192 GB space. The gap is probably the difference between the full stack capacity and what is exposed on shipping parts, so state which figure you use and why.</li>
+  <li><strong>Speedup breakdown.</strong> <a href="/b200-dossier/sources/jarmusch-2026-b200.html">Jarmusch 2026</a> gives two breakdowns. For GEMM it attributes the gain to SM count (1.09×), tensor core efficiency (1.27×), and memory bandwidth (1.23×). For training (§VII-D) it attributes it to SM count (1.09×), CTA pairing (1.27×), and TMEM (1.26×). Cite the one that matches the workload.</li>
+  <li><strong>GB203 versus B200.</strong> Results from <a href="/b200-dossier/sources/jarmusch-2025-gb203.html">Jarmusch 2025</a> come from a consumer part with no TMEM and a different FP64 rate. Do not apply them to B200 without saying so.</li>
+</ul>
+
+<h2 id="using-the-references">Using the references</h2>
+
+<p>Each <a href="/b200-dossier/sources/">source page</a> lists the relevant sections and includes a copyable BibTeX entry. <a href="/b200-dossier/references.bib">Download the full bibliography</a> to use all 17 entries in a LaTeX project.</p>
+      <p style="margin-top: 30px"><a href="/b200-dossier/">← Home</a></p>
+
+    </div>
+  </main>
+  <footer class="site-footer" role="contentinfo">
+    <nav aria-label="Site">
+      <a href="/b200-dossier/">Home</a>
+      <a href="/b200-dossier/DOSSIER.html">Dossier</a>
+      <a href="/b200-dossier/sources/">Sources</a>
+      <a href="/b200-dossier/references.bib">BibTeX</a>
+      <a href="https://docs.google.com/presentation/d/1qLnFZ4H0zG_O-Kr2XyaFzifGp5MTa0_2jJIzZNLrpF0/edit?usp=sharing">Slides</a>
+      <a href="/">Luke Abram</a>
+    </nav>
+  </footer>
+  <script>
+    document.querySelectorAll('pre code.language-bibtex').forEach((code) => {
+      const pre = code.closest('pre');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'copy-citation';
+      button.textContent = 'Copy BibTeX';
+      pre.before(button);
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(code.textContent);
+          button.textContent = 'Copied!';
+        } catch {
+          const range = document.createRange();
+          range.selectNodeContents(code);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          button.textContent = 'Selected — press Ctrl+C or ⌘C';
+        }
+        setTimeout(() => { button.textContent = 'Copy BibTeX'; }, 2500);
+      });
+    });
+  </script>
+</body>
+</html>

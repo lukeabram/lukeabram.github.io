@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sources · B200 dossier</title>
+  <meta name="description" content="Sources for the NVIDIA B200 dossier">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%2376b900'/%3E%3C/svg%3E">
+  <style>
+    html { scrollbar-gutter: stable; background: #fff; color: #222; }
+    * { box-sizing: border-box; }
+    body { font-family: Georgia, "Times New Roman", serif; line-height: 1.65; font-size: 17px; margin: 48px auto; padding: 0 22px; max-width: 760px; background: #fff; }
+    h1, h2, h3 { line-height: 1.25; }
+    h1 { font-size: 2rem; margin: 0 0 1.2rem; }
+    h2 { font-size: 1.35rem; margin: 2rem 0 .8rem; }
+    h3 { font-size: 1.1rem; margin: 1.5rem 0 .6rem; }
+    p { margin: 0 0 1rem; }
+    ul { padding-left: 1.3rem; }
+    li { margin: .6rem 0; }
+    a { color: #224d76; text-underline-offset: .15em; overflow-wrap: anywhere; }
+    a:hover { color: #111; }
+    a:focus-visible, button:focus-visible { outline: 2px solid #224d76; outline-offset: 4px; }
+    table { border-collapse: collapse; display: block; overflow-x: auto; margin: 0 0 1rem; font-size: 15px; }
+    th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; vertical-align: top; }
+    th { background: #f4f4f4; }
+    code { font-size: .85em; overflow-wrap: anywhere; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.5; padding: 16px; border: 1px solid #ddd; background: #f7f7f7; border-radius: 4px; }
+    pre code { font-size: inherit; }
+    .note { font-size: 15px; color: #555; }
+    .tag { font: 12px system-ui, sans-serif; border: 1px solid #bbb; border-radius: 3px; padding: 1px 5px; margin-left: 4px; color: #555; white-space: nowrap; }
+    .copy-citation { display: block; margin: 0 0 8px auto; padding: 6px 10px; font: 14px system-ui, sans-serif; color: #224d76; background: #fff; border: 1px solid #bbb; border-radius: 4px; cursor: pointer; }
+    .site-footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 15px; }
+    .site-footer nav { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+    @media (max-width: 480px) { body { margin: 28px auto; padding: 0 18px; } h1 { font-size: 1.65rem; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div id="maincontent">
+<h1>Sources</h1>
+
+<p>Each page gives a short overview, useful places to look, the sections of the report that rely on it, and a BibTeX citation. Section numbers use the edition named on that page. You can also <a href="/b200-dossier/references.bib">download the full bibliography</a>.</p>
+
+<p class="note">Links were checked in November 2026. The ACM, Hot Chips, MLCommons, and JEDEC sites refuse automated checks, so open those in a browser. Sources that need a UVA login, the VPN, or an account are marked on their pages.</p>
+
+<h2 id="primary-docs">Primary sources: NVIDIA documentation</h2>
+
+<ul>
+  <li><a href="/b200-dossier/sources/nvidia-blackwell-technical-overview.html">NVIDIA, Blackwell Architecture Technical Overview (whitepaper)</a></li>
+  <li><a href="/b200-dossier/sources/nvidia-blackwell-tuning-guide.html">NVIDIA, Blackwell Tuning Guide</a></li>
+  <li><a href="/b200-dossier/sources/nvidia-ptx-isa.html">NVIDIA, Parallel Thread Execution ISA, version 9.5</a></li>
+  <li><a href="/b200-dossier/sources/nvidia-cuda-programming-guide.html">NVIDIA, CUDA Programming Guide</a></li>
+  <li><a href="/b200-dossier/sources/cutlass-tcgen05-programming.html">NVIDIA CUTLASS 4.6, tcgen05 MMA Programming Guide</a></li>
+  <li><a href="/b200-dossier/sources/cutlass-blackwell-functionality.html">NVIDIA CUTLASS, Blackwell SM100 GEMMs</a></li>
+  <li><a href="/b200-dossier/sources/cudnn-block-scaling.html">NVIDIA cuDNN, Block Scaling</a></li>
+  <li><a href="/b200-dossier/sources/nvidia-nvlink-hgx.html">NVIDIA, NVLink &amp; NVLink Switch and HGX platform pages</a></li>
+</ul>
+
+<h2 id="primary-research">Primary sources: research and conference papers</h2>
+
+<ul>
+  <li><a href="/b200-dossier/sources/jarmusch-2026-b200.html">Jarmusch &amp; Chandrasekaran, Microbenchmarking NVIDIA’s Blackwell Architecture (arXiv 2512.02189, 2026)</a></li>
+  <li><a href="/b200-dossier/sources/jarmusch-2025-gb203.html">Jarmusch, Graddon &amp; Chandrasekaran, Dissecting the NVIDIA Blackwell Architecture with Microbenchmarks (arXiv 2507.10789, 2025)</a></li>
+  <li><a href="/b200-dossier/sources/lustig-asplos2019.html">Lustig, Sahasrabuddhe &amp; Giroux, A Formal Analysis of the NVIDIA PTX Memory Consistency Model (ASPLOS 2019)</a></li>
+  <li><a href="/b200-dossier/sources/hot-chips-2024-blackwell.html">NVIDIA, Blackwell presentation at Hot Chips 2024</a></li>
+</ul>
+
+<h2 id="secondary">Secondary sources</h2>
+
+<ul>
+  <li><a href="/b200-dossier/sources/chips-and-cheese-b200.html">Chips and Cheese, Nvidia’s B200: Keeping the CUDA Juggernaut Rolling</a></li>
+  <li><a href="/b200-dossier/sources/nvidia-blog-nvfp4.html">NVIDIA Technical Blog, Introducing NVFP4 for Efficient and Accurate Low-Precision Inference</a></li>
+  <li><a href="/b200-dossier/sources/cornell-cvw-gpu-architecture.html">Cornell Virtual Workshop, GPU Architecture (Blackwell B200 SM)</a></li>
+  <li><a href="/b200-dossier/sources/jedec-hbm3.html">JEDEC, High Bandwidth Memory (HBM3) DRAM, JESD238B.01</a></li>
+</ul>
+
+<h2 id="performance">Performance data</h2>
+
+<ul>
+  <li><a href="/b200-dossier/sources/mlperf-results.html">MLCommons, MLPerf Training and Inference results</a></li>
+</ul>
+      <p style="margin-top: 30px"><a href="/b200-dossier/">← Home</a></p>
+
+    </div>
+  </main>
+  <footer class="site-footer" role="contentinfo">
+    <nav aria-label="Site">
+      <a href="/b200-dossier/">Home</a>
+      <a href="/b200-dossier/DOSSIER.html">Dossier</a>
+      <a href="/b200-dossier/sources/">Sources</a>
+      <a href="/b200-dossier/references.bib">BibTeX</a>
+      <a href="https://docs.google.com/presentation/d/1qLnFZ4H0zG_O-Kr2XyaFzifGp5MTa0_2jJIzZNLrpF0/edit?usp=sharing">Slides</a>
+      <a href="/">Luke Abram</a>
+    </nav>
+  </footer>
+  <script>
+    document.querySelectorAll('pre code.language-bibtex').forEach((code) => {
+      const pre = code.closest('pre');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'copy-citation';
+      button.textContent = 'Copy BibTeX';
+      pre.before(button);
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(code.textContent);
+          button.textContent = 'Copied!';
+        } catch {
+          const range = document.createRange();
+          range.selectNodeContents(code);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          button.textContent = 'Selected — press Ctrl+C or ⌘C';
+        }
+        setTimeout(() => { button.textContent = 'Copy BibTeX'; }, 2500);
+      });
+    });
+  </script>
+</body>
+</html>

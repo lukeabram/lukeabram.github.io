@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Microbenchmarking NVIDIA’s Blackwell Architecture: An in-depth Architectural Analysis</title>
+  <meta name="description" content="B200 dossier source: Microbenchmarking NVIDIA’s Blackwell Architecture: An in-depth Architectural Analysis">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%2376b900'/%3E%3C/svg%3E">
+  <style>
+    html { scrollbar-gutter: stable; background: #fff; color: #222; }
+    * { box-sizing: border-box; }
+    body { font-family: Georgia, "Times New Roman", serif; line-height: 1.65; font-size: 17px; margin: 48px auto; padding: 0 22px; max-width: 760px; background: #fff; }
+    h1, h2, h3 { line-height: 1.25; }
+    h1 { font-size: 2rem; margin: 0 0 1.2rem; }
+    h2 { font-size: 1.35rem; margin: 2rem 0 .8rem; }
+    h3 { font-size: 1.1rem; margin: 1.5rem 0 .6rem; }
+    p { margin: 0 0 1rem; }
+    ul { padding-left: 1.3rem; }
+    li { margin: .6rem 0; }
+    a { color: #224d76; text-underline-offset: .15em; overflow-wrap: anywhere; }
+    a:hover { color: #111; }
+    a:focus-visible, button:focus-visible { outline: 2px solid #224d76; outline-offset: 4px; }
+    table { border-collapse: collapse; display: block; overflow-x: auto; margin: 0 0 1rem; font-size: 15px; }
+    th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; vertical-align: top; }
+    th { background: #f4f4f4; }
+    code { font-size: .85em; overflow-wrap: anywhere; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.5; padding: 16px; border: 1px solid #ddd; background: #f7f7f7; border-radius: 4px; }
+    pre code { font-size: inherit; }
+    .note { font-size: 15px; color: #555; }
+    .tag { font: 12px system-ui, sans-serif; border: 1px solid #bbb; border-radius: 3px; padding: 1px 5px; margin-left: 4px; color: #555; white-space: nowrap; }
+    .copy-citation { display: block; margin: 0 0 8px auto; padding: 6px 10px; font: 14px system-ui, sans-serif; color: #224d76; background: #fff; border: 1px solid #bbb; border-radius: 4px; cursor: pointer; }
+    .site-footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 15px; }
+    .site-footer nav { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+    @media (max-width: 480px) { body { margin: 28px auto; padding: 0 18px; } h1 { font-size: 1.65rem; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div id="maincontent">
+<h1>Microbenchmarking NVIDIA’s Blackwell Architecture: An in-depth Architectural Analysis</h1>
+
+<p>The main academic source for this report, because it measures an actual B200 rather than a consumer part. It uses PTX microbenchmarks on TMEM, the Decompression Engine, the tensor cores, and FP4/FP6, and compares the results against H200.</p>
+
+<p><a href="https://arxiv.org/abs/2512.02189">Read on arXiv</a>.</p>
+
+<p>First submitted 1 December 2025; section numbers refer to v3 (March 2026). Used in sections <a href="/b200-dossier/DOSSIER.html#section-a">A</a>, <a href="/b200-dossier/DOSSIER.html#section-c">C</a>, <a href="/b200-dossier/DOSSIER.html#section-d">D</a>.</p>
+
+<h2 id="where-to-look">Where to look</h2>
+
+<ul>
+  <li><strong>Blackwell Architecture, §III-A.</strong> 148 SMs over eight GPCs, four L2 partitions, eight HBM3e stacks, and NV-HBI.</li>
+  <li><strong>Tensor Memory, §V-A.</strong> TMEM as 256 KB per SM, organized as 512 columns × 128 lanes of 32-bit cells.</li>
+  <li><strong>Decompression Engine, §V-B.</strong> Measured output throughput of roughly 160–220 GB/s.</li>
+  <li><strong>5th-Generation Tensor Cores, §VI-A, and FP4/FP6, §VI-B.</strong> Measured dense throughput by precision.</li>
+  <li><strong>Mixed-Precision Training, §VII-D.</strong> Training speedup over H200 attributed to SM count (1.09×), CTA pairing (1.27×), and TMEM (1.26×).</li>
+  <li><strong>FP64, §VII-C1.</strong> Useful for the question of where B200 does not improve.</li>
+</ul>
+
+<h2 id="bibtex">BibTeX</h2>
+
+<pre><code class="language-bibtex">@misc{jarmusch2026blackwell,
+  author = {Jarmusch, Aaron and Chandrasekaran, Sunita},
+  title = {{Microbenchmarking NVIDIA&#x27;s Blackwell Architecture: An in-depth Architectural Analysis}},
+  year = {2026},
+  eprint = {2512.02189},
+  archivePrefix = {arXiv},
+  note = {v3, March 2026},
+  url = {https://arxiv.org/abs/2512.02189}
+}
+</code></pre>
+
+<p><a href="/b200-dossier/references.bib">Download all citations</a>.</p>
+      <p style="margin-top: 30px"><a href="/b200-dossier/">← Home</a></p>
+
+    </div>
+  </main>
+  <footer class="site-footer" role="contentinfo">
+    <nav aria-label="Site">
+      <a href="/b200-dossier/">Home</a>
+      <a href="/b200-dossier/DOSSIER.html">Dossier</a>
+      <a href="/b200-dossier/sources/">Sources</a>
+      <a href="/b200-dossier/references.bib">BibTeX</a>
+      <a href="https://docs.google.com/presentation/d/1qLnFZ4H0zG_O-Kr2XyaFzifGp5MTa0_2jJIzZNLrpF0/edit?usp=sharing">Slides</a>
+      <a href="/">Luke Abram</a>
+    </nav>
+  </footer>
+  <script>
+    document.querySelectorAll('pre code.language-bibtex').forEach((code) => {
+      const pre = code.closest('pre');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'copy-citation';
+      button.textContent = 'Copy BibTeX';
+      pre.before(button);
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(code.textContent);
+          button.textContent = 'Copied!';
+        } catch {
+          const range = document.createRange();
+          range.selectNodeContents(code);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          button.textContent = 'Selected — press Ctrl+C or ⌘C';
+        }
+        setTimeout(() => { button.textContent = 'Copy BibTeX'; }, 2500);
+      });
+    });
+  </script>
+</body>
+</html>
