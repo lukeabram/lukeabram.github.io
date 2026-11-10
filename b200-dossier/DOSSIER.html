@@ -90,7 +90,7 @@
 
 <p>For official capacities, start with §1.4.2 of the <a href="/b200-dossier/sources/nvidia-blackwell-tuning-guide.html">Tuning Guide</a>. It gives the 256 KB unified L1/shared memory, carve-outs up to 228 KB, and the 126 MB L2. For measured behavior, read “Cache and Memory Access” and “Bandwidth Measurements” in <a href="/b200-dossier/sources/chips-and-cheese-b200.html">Chips and Cheese</a>. That article shows the latency jump when a working set spills from the near L2 partition to the far one, and notes that most of the L2 is reachable without cross-partition penalties only when many threads are running.</p>
 
-<p>For the dual-die design and NV-HBI, use the <a href="/b200-dossier/sources/nvidia-blackwell-technical-overview.html">whitepaper</a> and the <a href="/b200-dossier/sources/hot-chips-2024-blackwell.html">Hot Chips 2024 slides</a>. For NVLink 5 and the HGX B200 board, use the <a href="/b200-dossier/sources/nvidia-nvlink-hgx.html">NVLink and HGX pages</a>. For background on how an HBM stack is organized, use <a href="/b200-dossier/sources/jedec-hbm3.html">JEDEC JESD238</a>.</p>
+<p>For the dual-die design and NV-HBI, use the <a href="/b200-dossier/sources/nvidia-blackwell-technical-overview.html">whitepaper</a> and the <a href="/b200-dossier/sources/hot-chips-2024-blackwell.html">Hot Chips 2024 slides</a>. For NVLink 5 and the HGX B200 board, use the <a href="/b200-dossier/sources/nvidia-nvlink-hgx.html">NVLink and HGX pages</a> for headline numbers. For how a B200 fits into a server, use the Components chapter of the <a href="/b200-dossier/sources/nvidia-hgx-ai-factory-ra.html">HGX AI Factory reference architecture</a>, which covers the NVSwitch fabric, PCIe links, host CPUs, and the 1:1 pairing of GPUs with SuperNICs. For background on how an HBM stack is organized, use <a href="/b200-dossier/sources/jedec-hbm3.html">JEDEC JESD238</a>.</p>
 
 <h2 id="section-d">D. Specialized units, performance, and framing</h2>
 
@@ -103,14 +103,14 @@
 <h2 id="disagreements">Where the sources disagree</h2>
 
 <ul>
-  <li><strong>HBM capacity.</strong> The <a href="/b200-dossier/sources/nvidia-blackwell-tuning-guide.html">Tuning Guide</a> (§1.4.2.1) gives up to 180 GB; <a href="/b200-dossier/sources/jarmusch-2026-b200.html">Jarmusch 2026</a> (§III-A) describes a unified 192 GB space. The gap is probably the difference between the full stack capacity and what is exposed on shipping parts, so state which figure you use and why.</li>
+  <li><strong>HBM capacity.</strong> The <a href="/b200-dossier/sources/nvidia-blackwell-tuning-guide.html">Tuning Guide</a> (§1.4.2.1) gives up to 180 GB, as does Table 1 of the <a href="/b200-dossier/sources/nvidia-hgx-ai-factory-ra.html">HGX reference architecture</a>; <a href="/b200-dossier/sources/jarmusch-2026-b200.html">Jarmusch 2026</a> (§III-A) describes a unified 192 GB space. The gap is probably the difference between the full stack capacity and what is exposed on shipping parts, so state which figure you use and why.</li>
   <li><strong>Speedup breakdown.</strong> <a href="/b200-dossier/sources/jarmusch-2026-b200.html">Jarmusch 2026</a> gives two breakdowns. For GEMM it attributes the gain to SM count (1.09×), tensor core efficiency (1.27×), and memory bandwidth (1.23×). For training (§VII-D) it attributes it to SM count (1.09×), CTA pairing (1.27×), and TMEM (1.26×). Cite the one that matches the workload.</li>
   <li><strong>GB203 versus B200.</strong> Results from <a href="/b200-dossier/sources/jarmusch-2025-gb203.html">Jarmusch 2025</a> come from a consumer part with no TMEM and a different FP64 rate. Do not apply them to B200 without saying so.</li>
 </ul>
 
 <h2 id="using-the-references">Using the references</h2>
 
-<p>Each <a href="/b200-dossier/sources/">source page</a> lists the relevant sections and includes a copyable BibTeX entry. <a href="/b200-dossier/references.bib">Download the full bibliography</a> to use all 17 entries in a LaTeX project.</p>
+<p>Each <a href="/b200-dossier/sources/">source page</a> lists the relevant sections and includes a copyable BibTeX entry. <a href="/b200-dossier/references.bib">Download the full bibliography</a> to use all 19 entries in a LaTeX project.</p>
       <p style="margin-top: 30px"><a href="/b200-dossier/">← Home</a></p>
 
     </div>
